@@ -1,0 +1,17 @@
+.MapCharts-container {
+  display: flex;
+  flex-direction: column-reverse;
+  flex: 1;
+  height: auto;
+  min-height: 70%;
+  gap: 50px;
+}
+.tableDiv {
+}
+.mapDiv {
+  width: fit-content;
+  min-width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
