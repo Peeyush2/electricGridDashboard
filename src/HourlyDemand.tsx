@@ -121,7 +121,7 @@ function HourlyDemand() {
     try {
       const requestData = {
         params: {
-          frequency: "hourly",
+          frequency: "local-hourly",
           "data[0]": "value",
           "facets[respondent][]": `${idParam ? idParam : "US48"}`,
           start: `${dateParam ? `${dateParam}` : `${getTodaysDate()}`}`,

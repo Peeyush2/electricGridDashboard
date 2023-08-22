@@ -6,6 +6,7 @@ import { Input, Label } from "reactstrap";
 import { useSearchParams } from "react-router-dom";
 import HourlyDemand from "./HourlyDemand";
 import EnergySource from "./EnergySource";
+import HourlyNeighboringUsage from "./HourlyNeighboringUsage";
 
 const today = new Date();
 const maxDate = today.toISOString().split("T")[0];
@@ -56,6 +57,10 @@ function App() {
           <hr />
           <div>
             <EnergySource />
+          </div>
+          <hr />
+          <div>
+            <HourlyNeighboringUsage />
           </div>
         </div>
       </div>
