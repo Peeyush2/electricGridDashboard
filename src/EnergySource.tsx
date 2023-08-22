@@ -128,7 +128,7 @@ function EnergySource() {
     >
       <h2> This chart shows electricity generation sources </h2>
 
-      <div style={{ minWidth: "50%" }}>
+      <div className="lineChart">
         {" "}
         {pieData?.labels?.length ? (
           <Pie data={pieData} />

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import "./App.css";
 import MapChart from "./MapChart";
 import "bootstrap/dist/css/bootstrap.min.css";

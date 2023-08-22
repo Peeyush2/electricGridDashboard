@@ -171,7 +171,7 @@ function HourlyDemand() {
         {" "}
         This chart shows hourly usage of electricity in different fields{" "}
       </h2>
-      <div style={{ minWidth: "50%" }}>
+      <div className="lineChart">
         {dataForChart && <Line options={options} data={dataForChart} />}
       </div>
     </div>
