@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./App.css";
 import MapChart from "./MapChart";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Input } from "reactstrap";
+import { Input, Label } from "reactstrap";
 import { useSearchParams } from "react-router-dom";
 import HourlyDemand from "./HourlyDemand";
 import EnergySource from "./EnergySource";
@@ -14,27 +14,50 @@ function App() {
   const [searchParams, setSearchParams] = useSearchParams();
   const id = searchParams.get("id");
   const date = searchParams.get("date");
+  useEffect(() => {
+    if (!id && !date) {
+      setSearchParams({
+        id: "US48",
+        date: maxDate,
+      });
+    }
+  }, []);
   return (
     <div className="App">
-      <Input
-        type="date"
-        max={maxDate}
-        value={date || ""}
-        onChange={(e) =>
-          setSearchParams(() => ({
-            date: e.target.value,
-            id: id || "",
-          }))
-        }
-      />
-      <div>
-        <MapChart />
-      </div>
-      <div>
-        <HourlyDemand />
-      </div>
-      <div>
-        <EnergySource />
+      <div className="marginDiv">
+        <div className="header">Daily Electricity Dashboard</div>
+        <div className="mainContent">
+          <div className="dateSelector">
+            <Label for="inputDate">
+              Please provide date for which you want to see data:
+            </Label>
+            <Input
+              className="dateInput"
+              id="inputDate"
+              type="date"
+              max={maxDate}
+              value={date || ""}
+              onChange={(e) =>
+                setSearchParams(() => ({
+                  date: e.target.value,
+                  id: id || "",
+                }))
+              }
+            />
+          </div>
+          <hr />
+          <div>
+            <MapChart />
+          </div>
+          <hr />
+          <div>
+            <HourlyDemand />
+          </div>
+          <hr />
+          <div>
+            <EnergySource />
+          </div>
+        </div>
       </div>
     </div>
   );

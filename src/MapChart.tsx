@@ -12,6 +12,13 @@ import { useSearchParams } from "react-router-dom";
 import "./MapCharts.css";
 import TableData, { tableDataType } from "./TableData";
 
+const allLabels = [
+  { label: "TI", name: "Total Interchange" },
+  { label: "DF", name: "Day-ahead demand forecast" },
+  { label: "D", name: "Demand" },
+  { label: "NG", name: "Net generation" },
+];
+
 interface Respondent {
   flag?: string | null;
   has_subregion?: "N" | "Y";
@@ -56,6 +63,7 @@ export default function MapChart() {
   const [rerspondentDatas, setRespondentDatas] = useState<Respondent[]>([]);
   const [connectionData, setConnectionData] = useState<ConnectedData[]>([]);
   const [tableData, setTableData] = useState<tableDataType>();
+  const [overViewData, setOverviewData] = useState<tableDataType>();
   const [searchParams, setSearchParams] = useSearchParams();
   const idParam = searchParams.get("id");
   const dateParam = searchParams.get("date");
@@ -185,6 +193,26 @@ export default function MapChart() {
             twoDArray.push(row);
           }
         );
+
+        const twoDArrayOverView: any[][] = [];
+        for (const colValues in allLabels) {
+          const currLabel = allLabels[colValues];
+          const dataForLabel = response?.data?.response?.data?.filter(
+            (entry: any) => entry?.type === currLabel.label
+          );
+
+          const sumForLabel = dataForLabel.reduce(
+            (accumulator: number, dataWithSimilarType: any) =>
+              dataWithSimilarType?.value + accumulator,
+            0
+          );
+
+          twoDArrayOverView.push([currLabel.name, sumForLabel]);
+        }
+        setOverviewData({
+          columNames: ["Label", "Total Electricity"],
+          columnData: twoDArrayOverView,
+        });
         setTableData({ columNames: columnsForTable, columnData: twoDArray });
       } else {
         console.log("error in api call");
@@ -196,75 +224,88 @@ export default function MapChart() {
   };
 
   return (
-    <div className="MapCharts-container">
-      <Tooltip id="my-tooltip" />
-      <div className="tableDiv">
-        {/* <TableData
-          columNames={tableData?.columNames}
-          columnData={tableData?.columnData}
-        /> */}
-      </div>
-      <div className="mapDiv">
-        <ComposableMap onClick={() => null} projection="geoAlbers">
-          <Geographies geography={geoUrl}>
-            {({ geographies }) =>
-              geographies.map((geo) => (
-                <Geography
-                  style={{
-                    default: { outline: "none" },
-                    hover: { outline: "none" },
-                    pressed: { outline: "none" },
-                  }}
-                  key={geo.rsmKey}
-                  geography={geo}
-                  stroke="rgb(224, 224, 224)"
-                  fill="rgb(173, 173, 173)"
-                />
-              ))
-            }
-          </Geographies>
-
-          {connectionData?.length &&
-            connectionData?.map(({ from, to }) =>
-              to?.map(({ lat, lon }) => (
-                <Line
-                  z={2}
-                  stroke={idParam === from?.id ? "red" : "black"}
-                  strokeWidth={idParam === from?.id ? 1 : 0.2}
-                  strokeLinecap="round"
-                  from={[from?.lon, from?.lat]}
-                  to={[lon, lat]}
-                ></Line>
-              ))
-            )}
-
-          {rerspondentDatas?.length &&
-            rerspondentDatas?.map(({ lat, lon, radius, id }) =>
-              lat && lon && radius ? (
-                <Marker key={id} coordinates={[lon, lat]}>
-                  <circle
-                    onClick={() =>
-                      setSearchParams(() => ({
-                        date: dateParam ? dateParam : "",
-                        id: id || "",
-                      }))
-                    }
+    <div>
+      <h2>
+        Showing results for
+        {idParam !== "US48"
+          ? ` 
+        ${rerspondentDatas?.filter((d) => d.id === idParam)?.at(0)?.name}`
+          : " US Lower 48"}
+      </h2>
+      <div className="MapCharts-container">
+        <Tooltip id="my-tooltip" />
+        <div className="tableDiv">
+          <div>
+            <h5> Electricity consumption Overview (megawatts) </h5>
+          </div>
+          {/* <TableData /> */}
+          <TableData
+            columNames={overViewData?.columNames}
+            columnData={overViewData?.columnData}
+          />
+        </div>
+        <div className="mapDiv">
+          <ComposableMap onClick={() => null} projection="geoAlbers">
+            <Geographies geography={geoUrl}>
+              {({ geographies }) =>
+                geographies.map((geo) => (
+                  <Geography
                     style={{
-                      outline: "none",
+                      default: { outline: "none" },
+                      hover: { outline: "none" },
+                      pressed: { outline: "none" },
                     }}
-                    data-tooltip-id="my-tooltip"
-                    data-tooltip-content={`${id}`}
-                    key={id}
-                    r={getReadius(radius)}
-                    fill={id === idParam ? "red" : "rgb(208, 235, 248)"}
-                    stroke="black"
+                    key={geo.rsmKey}
+                    geography={geo}
+                    stroke="rgb(224, 224, 224)"
+                    fill="rgb(173, 173, 173)"
                   />
-                </Marker>
-              ) : (
-                <></>
-              )
-            )}
-        </ComposableMap>
+                ))
+              }
+            </Geographies>
+
+            {connectionData?.length &&
+              connectionData?.map(({ from, to }) =>
+                to?.map(({ lat, lon }) => (
+                  <Line
+                    z={2}
+                    stroke={idParam === from?.id ? "red" : "black"}
+                    strokeWidth={idParam === from?.id ? 1 : 0.2}
+                    strokeLinecap="round"
+                    from={[from?.lon, from?.lat]}
+                    to={[lon, lat]}
+                  ></Line>
+                ))
+              )}
+
+            {rerspondentDatas?.length &&
+              rerspondentDatas?.map(({ lat, lon, radius, id, name }) =>
+                lat && lon && radius ? (
+                  <Marker key={id} coordinates={[lon, lat]}>
+                    <circle
+                      onClick={() =>
+                        setSearchParams(() => ({
+                          date: dateParam ? dateParam : "",
+                          id: id || "",
+                        }))
+                      }
+                      style={{
+                        outline: "none",
+                      }}
+                      data-tooltip-id="my-tooltip"
+                      data-tooltip-content={`${id} : ${name}`}
+                      key={id}
+                      r={getReadius(radius)}
+                      fill={id === idParam ? "red" : "rgb(208, 235, 248)"}
+                      stroke="black"
+                    />
+                  </Marker>
+                ) : (
+                  <></>
+                )
+              )}
+          </ComposableMap>
+        </div>
       </div>
     </div>
   );

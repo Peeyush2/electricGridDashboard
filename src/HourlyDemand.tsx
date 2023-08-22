@@ -49,7 +49,7 @@ export const options = {
     },
     title: {
       display: true,
-      text: "Chart.js Line Chart",
+      text: "Electricity usage",
     },
   },
 };
@@ -157,7 +157,24 @@ function HourlyDemand() {
     fetchNewData();
   }, [idParam, dateParam]);
   return (
-    <div>{dataForChart && <Line options={options} data={dataForChart} />}</div>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: "10px 0px 10px 0px",
+        marginTop: "20px",
+      }}
+    >
+      <h2>
+        {" "}
+        This chart shows hourly usage of electricity in different fields{" "}
+      </h2>
+      <div style={{ minWidth: "50%" }}>
+        {dataForChart && <Line options={options} data={dataForChart} />}
+      </div>
+    </div>
   );
 }
 

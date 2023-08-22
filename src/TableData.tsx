@@ -8,7 +8,7 @@ export interface tableDataType {
 
 function TableData({ columNames, columnData }: tableDataType) {
   return (
-    <Table bordered striped>
+    <Table bordered style={{ backgroundColor: "transparent" }} striped>
       <thead>
         <tr>
           {columNames?.map((columName) => (

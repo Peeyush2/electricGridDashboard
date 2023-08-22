@@ -116,7 +116,28 @@ function EnergySource() {
     }
   };
 
-  return <>{pieData && <Pie data={pieData} />}</>;
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: "10px 0px 10px 0px",
+      }}
+    >
+      <h2> This chart shows electricity generation sources </h2>
+
+      <div style={{ minWidth: "50%" }}>
+        {" "}
+        {pieData?.labels?.length ? (
+          <Pie data={pieData} />
+        ) : (
+          <h2> Data not available</h2>
+        )}
+      </div>
+    </div>
+  );
 }
 
 export default EnergySource;
